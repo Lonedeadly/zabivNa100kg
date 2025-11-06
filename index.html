@@ -88,12 +88,12 @@
     <div class="container">
         <h1>Цель: 100 кг в жиме лёжа</h1>
         
-        <div class="timer" id="timer">00 дней 00 часов 00 минут 00 секунд</div>
+        <div class="timer" id="timer">...</div>
         
         <div class="goal">
             <p><strong>Цель:</strong> Дойти до 100 кг в жиме лёжа за 1 год.</p>
-            <p><strong>Начало:</strong> <span id="startDate"></span></p>
-            <p><strong>Конец:</strong> <span id="endDate"></span></p>
+            <p><strong>Начало:</strong> <span id="startDate">06.11.2025</span></p>
+            <p><strong>Конец:</strong> <span id="endDate">06.11.2026</span></p>
         </div>
 
         <table class="progress-table">
@@ -115,14 +115,14 @@
     </div>
 
     <script>
-        // Даты начала и конца
-        const startDate = new Date();
-        const endDate = new Date(startDate);
-        endDate.setFullYear(startDate.getFullYear() + 1);
+        // Жёстко заданные даты (не зависят от текущей даты браузера)
+        const startDateValue = new Date('2025-11-06T00:00:00'); // 6 ноября 2025
+        const endDateValue = new Date('2026-11-06T00:00:00'); // 6 ноября 2026
 
-        // Выводим даты
-        document.getElementById('startDate').textContent = startDate.toLocaleDateString('ru-RU');
-        document.getElementById('endDate').textContent = endDate.toLocaleDateString('ru-RU');
+        // Выводим даты в интерфейс
+        document.getElementById('startDate').textContent = startDateValue.toLocaleDateString('ru-RU');
+        document.getElementById('endDate').textContent = endDateValue.toLocaleDateString('ru-RU');
+
 
         // Названия месяцев
         const months = [
@@ -130,33 +130,34 @@
             'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
         ];
 
-        // Текущий месяц
-        const currentMonth = startDate.getMonth();
+        // Текущий месяц (ноябрь = 10)
+        const currentMonth = 10;
 
         // Массив с результатами по месяцам (меняйте здесь вручную)
         const monthlyResults = [
-            0,  // текущий месяц
-            0,  // +1 месяц
-            0,  // +2 месяца
-            0,  // +3 месяца
-            0,  // +4 месяца
-            0,  // +5 месяцев
-            0,  // +6 месяцев
-            0,  // +7 месяцев
-            0,  // +8 месяцев
-            0,  // +9 месяцев
-            0,  // +10 месяцев
-            0   // +11 месяцев
+            0,  // ноябрь 2025
+            0,  // декабрь 2025
+            0,  // январь 2026
+            0,  // февраль 2026
+            0,  // март 2026
+            0,  // апрель 2026
+            0,  // май 2026
+            0,  // июнь 2026
+            0,  // июль 2026
+            0,  // август 2026
+            0,  // сентябрь 2026
+            0   // октябрь 2026
         ];
 
-        // Создаём строки таблицы для 12 месяцев начиная с текущего
+        // Создаём строки таблицы для 12 месяцев начиная с ноября 2025
         const progressBody = document.getElementById('progressBody');
         
         for (let i = 0; i < 12; i++) {
             const monthIndex = (currentMonth + i) % 12;
             const yearOffset = Math.floor((currentMonth + i) / 12);
-            const displayYear = startDate.getFullYear() + yearOffset;
+            const displayYear = 2025 + yearOffset;
             const displayMonth = `${months[monthIndex]} ${displayYear}`;
+
 
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -166,10 +167,10 @@
             progressBody.appendChild(row);
         }
 
-        // Таймер обратного отсчёта
+        // Таймер обратного отсчёта (от фиксированной даты)
         function updateTimer() {
             const now = new Date();
-            const distance = endDate - now;
+            const distance = endDateValue - now;
 
             if (distance <= 0) {
                 document.getElementById('timer').textContent = 'Цель достигнута!';
@@ -181,7 +182,7 @@
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            document.getElementById('timer').textContent =
+            document.getElementById('timer').textContent = 
                 `${days} дней ${hours} часов ${minutes} минут ${seconds} секунд`;
         }
 
