@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Цель: 100 кг в жиме лёжа</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: #1e1e1e;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 25px;
+            color: #bb86fc;
+            text-shadow: 0 2px 5px rgba(187, 134, 252, 0.3);
+        }
+        .timer {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin: 30px 0;
+            color: #03dac6;
+            text-shadow: 0 0 15px rgba(3, 218, 198, 0.4);
+        }
+        .goal {
+            background-color: #2c2c2c;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: left;
+        }
+        .progress-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .progress-table th,
+        .progress-table td {
+            padding: 14px;
+            text-align: center;
+            border-bottom: 1px solid #333;
+        }
+        .progress-table th {
+            background-color: #3d3d3d;
+            color: #bb86fc;
+            font-weight: 600;
+        }
+        .progress-table tr:nth-child(even) {
+            background-color: #252525;
+        }
+        .bet {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #3d3d3d;
+            border-radius: 10px;
+            font-weight: 500;
+            line-height: 1.6;
+        }
+        .result-cell {
+            font-weight: bold;
+            color: #03dac6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Цель: 100 кг в жиме лёжа</h1>
+        
+        <div class="timer" id="timer">00 дней 00 часов 00 минут 00 секунд</div>
+        
+        <div class="goal">
+            <p><strong>Цель:</strong> Дойти до 100 кг в жиме лёжа за 1 год.</p>
+            <p><strong>Начало:</strong> <span id="startDate"></span></p>
+            <p><strong>Конец:</strong> <span id="endDate"></span></p>
+        </div>
+
+        <table class="progress-table">
+            <thead>
+                <tr>
+                    <th>Месяц</th>
+                    <th>Результат (кг)</th>
+                </tr>
+            </thead>
+            <tbody id="progressBody">
+                <!-- Строки будут добавлены скриптом -->
+            </tbody>
+        </table>
+
+        <div class="bet">
+            Если цель будет достигнута — 10 000 рублей получает Лёха.<br>
+            Если цель не будет достигнута — получает Тёма.
+        </div>
+    </div>
+
+    <script>
+        // Даты начала и конца
+        const startDate = new Date();
+        const endDate = new Date(startDate);
+        endDate.setFullYear(startDate.getFullYear() + 1);
+
+        // Выводим даты
+        document.getElementById('startDate').textContent = startDate.toLocaleDateString('ru-RU');
+        document.getElementById('endDate').textContent = endDate.toLocaleDateString('ru-RU');
+
+        // Названия месяцев
+        const months = [
+            'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+            'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+        ];
+
+        // Текущий месяц
+        const currentMonth = startDate.getMonth();
+
+        // Массив с результатами по месяцам (меняйте здесь вручную)
+        const monthlyResults = [
+            0,  // текущий месяц
+            0,  // +1 месяц
+            0,  // +2 месяца
+            0,  // +3 месяца
+            0,  // +4 месяца
+            0,  // +5 месяцев
+            0,  // +6 месяцев
+            0,  // +7 месяцев
+            0,  // +8 месяцев
+            0,  // +9 месяцев
+            0,  // +10 месяцев
+            0   // +11 месяцев
+        ];
+
+        // Создаём строки таблицы для 12 месяцев начиная с текущего
+        const progressBody = document.getElementById('progressBody');
+        
+        for (let i = 0; i < 12; i++) {
+            const monthIndex = (currentMonth + i) % 12;
+            const yearOffset = Math.floor((currentMonth + i) / 12);
+            const displayYear = startDate.getFullYear() + yearOffset;
+            const displayMonth = `${months[monthIndex]} ${displayYear}`;
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${displayMonth}</td>
+                <td class="result-cell">${monthlyResults[i]} кг</td>
+            `;
+            progressBody.appendChild(row);
+        }
+
+        // Таймер обратного отсчёта
+        function updateTimer() {
+            const now = new Date();
+            const distance = endDate - now;
+
+            if (distance <= 0) {
+                document.getElementById('timer').textContent = 'Цель достигнута!';
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById('timer').textContent =
+                `${days} дней ${hours} часов ${minutes} минут ${seconds} секунд`;
+        }
+
+        // Обновляем таймер каждую секунду
+        setInterval(updateTimer, 1000);
+        updateTimer(); // Первый вызов
+    </script>
+</body>
+</html>
